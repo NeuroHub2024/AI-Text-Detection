@@ -60,3 +60,7 @@ def predict():
         return jsonify(str(result))
     else:
         return jsonify({"error": "Invalid JSON data in request body"}), 400
+
+
+if __name__ == "__main__":
+    app.run()
