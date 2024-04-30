@@ -13,9 +13,9 @@ app = Flask(__name__)
 #############################################
 
 
-db_config = AutoConfig.from_pretrained("config.json")
+db_config = AutoConfig.from_pretrained("../config.json")
 reloaded_model = TFAutoModelForSequenceClassification.from_pretrained(
-    "tf_model.h5", config=db_config
+    "../tf_model.h5", config=db_config
 )
 
 model_name = (
