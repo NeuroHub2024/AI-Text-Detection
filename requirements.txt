@@ -1,6 +1,7 @@
+python==3.12.3
 fastapi
 numpy
-tensorflow
+tensorflow-cpu
 transformers
 uvicorn[standard]
 tf_keras

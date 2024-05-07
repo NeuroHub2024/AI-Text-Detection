@@ -1,10 +1,10 @@
 # import flast module
-from fastapi import FastAPI,Request
+from fastapi import FastAPI, Request
 import tensorflow as tf
 from transformers import TFAutoModelForSequenceClassification, AutoConfig, AutoTokenizer
 import numpy as np
 import uvicorn
-import json
+
 
 # instance of flask application
 app = FastAPI()
@@ -14,13 +14,15 @@ app = FastAPI()
 # Loading Model
 #############################################
 def get_model():
-    model_name = ("distilbert/distilbert-base-uncased-finetuned-sst-2-english")
+    model_name = "distilbert/distilbert-base-uncased-finetuned-sst-2-english"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = TFAutoModelForSequenceClassification.from_pretrained("Yuhhi/ai-text-detector")
-    return tokenizer,model
+    model = TFAutoModelForSequenceClassification.from_pretrained(
+        "Yuhhi/ai-text-detector"
+    )
+    return tokenizer, model
 
 
-tokenizer,model = get_model()
+tokenizer, model = get_model()
 
 
 # home route that returns below text when root url is accessed
@@ -33,11 +35,13 @@ def read_root():
 async def read_root(request: Request):
     data = await request.json()
     # print(data['text'])
-    if 'text' in data:
+    if "text" in data:
 
-        text = data['text']
+        text = data["text"]
 
-        encoded_input = tokenizer( text, truncation=True, padding=True, max_length=128, return_tensors="tf")
+        encoded_input = tokenizer(
+            text, truncation=True, padding=True, max_length=128, return_tensors="tf"
+        )
 
         tf_input = tf.data.Dataset.from_tensor_slices((dict(encoded_input)))
 
@@ -47,14 +51,18 @@ async def read_root(request: Request):
 
         result = {
             "label": str(predicted_labels.numpy()[0]),
-            "human-genrated": str(np.format_float_positional(predicted_probabilities.numpy()[0][0] * 100)),
-            "ai-generated": str(np.format_float_positional(predicted_probabilities.numpy()[0][1] * 100))
+            "human-genrated": str(
+                np.format_float_positional(predicted_probabilities.numpy()[0][0] * 100)
+            ),
+            "ai-generated": str(
+                np.format_float_positional(predicted_probabilities.numpy()[0][1] * 100)
+            ),
         }
-        
+
         return result
     else:
         return {"Recieved Text": "No Text Found"}
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app",host="0.0.0.0" ,port=10000, reload=True)
+    uvicorn.run("main:app", port=3000)
