@@ -1,4 +1,6 @@
-Flask
+fastapi
 numpy
 tensorflow
 transformers
+uvicorn[standard]
+tf_keras
